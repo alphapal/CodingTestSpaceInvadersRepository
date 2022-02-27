@@ -1,14 +1,29 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class AlienSpawnPoints : MonoBehaviour
 {
     [SerializeField] private GameObject alienPrefab;
+    [SerializeField] private GameObject alienLaserPrefab;
+    [SerializeField] private float laserShootTime = 5f, laserShootRate = 2f;
     [SerializeField] private int rows, cols;
     [SerializeField] private Transform rightBound, leftBound;
     private float alienSpeed = 1.0f;
     private Vector3 alienDirection = Vector3.right;
+    private int aliensKilled = 0;
+    public static event Action<int> AliensKilled;
+
+    private void OnEnable()
+    {
+        Laser.AlienDestroyed += AlienDestroyed;
+    }
+    private void OnDisable()
+    {
+        Laser.AlienDestroyed -= AlienDestroyed;
+    }
 
     private void Awake()
     {
@@ -19,6 +34,7 @@ public class AlienSpawnPoints : MonoBehaviour
                 Instantiate(alienPrefab, new Vector2(gameObject.transform.position.x + i, gameObject.transform.position.y + j), Quaternion.identity, gameObject.transform);
             }
         }
+        InvokeRepeating(nameof(AlienFire), laserShootTime, laserShootRate);
     }
     private void Update()
     {
@@ -38,4 +54,21 @@ public class AlienSpawnPoints : MonoBehaviour
             }
         }
     }
+
+    private void AlienFire()
+    {
+        Instantiate(alienLaserPrefab, transform.position, Quaternion.identity);
+    }
+
+    private void AlienDestroyed()
+    {
+        aliensKilled++;
+        AliensKilled.Invoke(aliensKilled);
+
+        if(aliensKilled >= (rows * cols))
+        {
+            SceneManager.LoadScene((SceneManager.GetActiveScene().name));
+        }
+    }
+
 }
