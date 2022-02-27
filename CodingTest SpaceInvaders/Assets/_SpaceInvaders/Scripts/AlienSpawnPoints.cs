@@ -57,7 +57,7 @@ public class AlienSpawnPoints : MonoBehaviour
 
     private void AlienFire()
     {
-        Instantiate(alienLaserPrefab, transform.position, Quaternion.identity);
+        Instantiate(alienLaserPrefab, new Vector3(UnityEngine.Random.Range(transform.position.x, transform.position.x + rows), transform.position.y, transform.position.z), Quaternion.identity);
     }
 
     private void AlienDestroyed()
@@ -67,7 +67,7 @@ public class AlienSpawnPoints : MonoBehaviour
 
         if(aliensKilled >= (rows * cols))
         {
-            SceneManager.LoadScene((SceneManager.GetActiveScene().name));
+            SceneManager.LoadScene("StartScene");
         }
     }
 

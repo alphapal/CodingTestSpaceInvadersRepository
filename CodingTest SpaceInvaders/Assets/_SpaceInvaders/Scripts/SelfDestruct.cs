@@ -6,7 +6,8 @@ enum DestructableObjects
 {
     alien,
     Player, 
-    bounds
+    bounds, 
+    box
 };
 public class SelfDestruct : MonoBehaviour
 {
